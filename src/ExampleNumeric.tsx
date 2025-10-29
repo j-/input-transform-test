@@ -42,6 +42,7 @@ export const ExampleNumeric: FC<{
       type="text"
       inputMode="numeric"
       pattern="\d*"
+      maxLength={10}
     />
   );
 };

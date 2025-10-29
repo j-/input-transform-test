@@ -49,7 +49,7 @@ export const App = () => {
 
       <h2>Numeric input field example</h2>
 
-      <p>Only numbers allowed.</p>
+      <p>Only numbers allowed. Max length of 10 digits.</p>
       
       <ExampleNumeric execCommand={execCommand} />
 
