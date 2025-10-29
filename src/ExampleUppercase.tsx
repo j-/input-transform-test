@@ -53,4 +53,4 @@ const transform = (str: string) =>
     // Normalize various forms of quotes.
     .replace(/["`\u2018\u2019]/g, "'")
     // Remove everything but letters, spaces, and quotes.
-    .replace(/[^\w ']/g, '');
+    .replace(/[^A-Z ']/g, '');
