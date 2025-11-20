@@ -13,6 +13,7 @@ export const ExampleUppercase: FC<{
     applyTransform,
     handleBeforeInput,
     handleInput,
+    handleChange,
   } = useMemo(() => {
     return makeInputTransform({
       transform,
@@ -28,12 +29,14 @@ export const ExampleUppercase: FC<{
 
     input.addEventListener('beforeinput', handleBeforeInput);
     input.addEventListener('input', handleInput);
+    input.addEventListener('change', handleChange);
 
     return () => {
       input.removeEventListener('beforeinput', handleBeforeInput);
       input.removeEventListener('input', handleInput);
+      input.removeEventListener('change', handleChange);
     };
-  }, [applyTransform, handleBeforeInput, handleInput]);
+  }, [applyTransform, handleBeforeInput, handleInput, handleChange]);
 
   return (
     <input

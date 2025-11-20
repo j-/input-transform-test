@@ -33,7 +33,7 @@ body {
   margin: 1rem auto 4rem;
 }
 
-input[type=text] {
+input:is([type=text], [type=tel]) {
   width: 100%;
   box-sizing: border-box;
   padding: 1rem;

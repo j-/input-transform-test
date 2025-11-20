@@ -3,9 +3,11 @@ export type StringTransform = (input: string) => string;
 export const makeInputTransform = ({
   transform,
   execCommand = document.execCommand,
+  selectWhenDropped = true,
 }: {
   transform: StringTransform;
   execCommand?: Document['execCommand'] | null;
+  selectWhenDropped?: boolean;
 }) => ({
   applyTransform(input: Pick<HTMLInputElement, 'value'>) {
     const currentValue = input.value;
@@ -46,6 +48,15 @@ export const makeInputTransform = ({
     // Use execCommand to insert the transformed text. Preserves history stack.
     if (typeof execCommand === 'function') {
       execCommand.call(document, 'insertText', false, transformed);
+
+      if (selectWhenDropped && e.inputType === 'insertFromDrop') {
+        const input = e.currentTarget as HTMLInputElement;
+        const start = input.selectionStart ?? input.value.length
+        input.setSelectionRange(
+          start - transformed.length,
+          start,
+        );
+      }
     }
   },
 
@@ -66,7 +77,9 @@ export const makeInputTransform = ({
       transform(valueBeforeSelection);
 
     const transformedValueWithinSelection =
-      inputType === 'insertFromDrop' ? transform(valueWithinSelection) : '';
+      inputType === 'insertFromDrop' ?
+        transform(valueWithinSelection) :
+        '';
 
     const transformedValueAfterSelection =
       transform(valueAfterSelection);
@@ -78,9 +91,29 @@ export const makeInputTransform = ({
     
     if (transformedValue !== value) {
       input.value = transformedValue;
-      input.selectionStart = transformedValueBeforeSelection.length;
-      input.selectionEnd = transformedValueBeforeSelection.length +
-        transformedValueWithinSelection.length;
+      // input.selectionStart = transformedValueBeforeSelection.length;
+      // input.selectionEnd = transformedValueBeforeSelection.length +
+      //   transformedValueWithinSelection.length;
+      if (inputType !== 'insertFromDrop' || selectWhenDropped) {
+        input.setSelectionRange(
+          transformedValueBeforeSelection.length,
+          transformedValueBeforeSelection.length +
+          transformedValueWithinSelection.length
+        );
+      }
+    }
+  },
+
+  handleChange(e: Event) {
+    const input = e.currentTarget as HTMLInputElement;
+    const value = input.value;
+
+    const transformedValue = transform(value);
+    
+    // Last resort action if the beforeinput/input events were
+    // not respected e.g. when performing autocomplete.
+    if (transformedValue !== value) {
+      input.value = transformedValue;
     }
   },
 });
@@ -89,4 +122,5 @@ export const makeInputTransformIdentity = (): ReturnType<typeof makeInputTransfo
   applyTransform() {},
   handleBeforeInput() {},
   handleInput() {},
+  handleChange() {},
 });

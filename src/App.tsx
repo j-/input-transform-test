@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ExampleNumeric } from './ExampleNumeric';
 import { ExampleUppercase } from './ExampleUppercase';
+import { ExampleMobile } from './ExampleMobile';
+import { ExampleGivenName } from './ExampleGivenName';
 
 const supportsExecCommand = typeof document.execCommand === 'function';
 
@@ -53,11 +55,23 @@ export const App = () => {
       
       <ExampleNumeric execCommand={execCommand} />
 
+      <h2>Phone number input field example</h2>
+
+      <p>Similar to the previous example except the input is marked as being type "tel" and it has an autocomplete attribute.</p>
+      
+      <ExampleMobile execCommand={execCommand} />
+
       <h2>Uppercase input field example</h2>
 
       <p>Letters, spaces, and quotes allowed. Letters will be made uppercase. Quotes will be normalized.</p>
       
       <ExampleUppercase execCommand={execCommand} />
+
+      <h2>Given name input field example</h2>
+
+      <p>The same as the previous example except the input has an autocomplete attribute.</p>
+      
+      <ExampleGivenName execCommand={execCommand} />
 
       <h2>Standard input</h2>
 

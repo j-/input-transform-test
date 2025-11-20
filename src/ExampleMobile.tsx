@@ -2,7 +2,7 @@ import { type FC, useEffect, useMemo, useRef } from 'react';
 
 import { makeInputTransform } from './make-input-transform';
 
-export const ExampleNumeric: FC<{
+export const ExampleMobile: FC<{
   execCommand?: Document['execCommand'] | null,
 }> = ({
   execCommand,
@@ -42,10 +42,11 @@ export const ExampleNumeric: FC<{
     <input
       ref={inputRef}
       defaultValue=""
-      type="text"
-      inputMode="numeric"
+      inputMode="tel"
       pattern="\d*"
       maxLength={10}
+      type="tel"
+      autoComplete="tel"
     />
   );
 };

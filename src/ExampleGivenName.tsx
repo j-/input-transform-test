@@ -2,7 +2,7 @@ import { type FC, useEffect, useMemo, useRef } from 'react';
 
 import { makeInputTransform } from './make-input-transform';
 
-export const ExampleNumeric: FC<{
+export const ExampleGivenName: FC<{
   execCommand?: Document['execCommand'] | null,
 }> = ({
   execCommand,
@@ -41,14 +41,20 @@ export const ExampleNumeric: FC<{
   return (
     <input
       ref={inputRef}
-      defaultValue=""
       type="text"
-      inputMode="numeric"
-      pattern="\d*"
-      maxLength={10}
+      defaultValue=""
+      autoCapitalize="characters"
+      autoComplete='given-name'
     />
   );
 };
 
 const transform = (str: string) =>
-  str.replace(/\D/g, '');
+  str
+    .toUpperCase()
+    // Remove diacritic marks.
+    .normalize('NFD')
+    // Normalize various forms of quotes.
+    .replace(/["`\u2018\u2019]/g, "'")
+    // Remove everything but letters, spaces, and quotes.
+    .replace(/[^A-Z ']/g, '');
