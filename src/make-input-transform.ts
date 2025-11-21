@@ -1,15 +1,28 @@
 export type StringTransform = (input: string) => string;
 
-export const makeInputTransform = ({
-  transform,
-  execCommand = document.execCommand,
-  selectWhenDropped = true,
-}: {
+export type MakeInputTransformOptions = {
   transform: StringTransform;
   execCommand?: Document['execCommand'] | null;
   selectWhenDropped?: boolean;
+};
+
+export type MakeInputTransformResult = {
+  applyTransform(input: Pick<HTMLInputElement, 'value'>): void;
+  handleBeforeInput(e: InputEvent): void;
+  handleInput(e: Event | InputEvent): void;
+  handleChange(e: Event): void;
+};
+
+export type MakeInputTransform = (
+  options: MakeInputTransformOptions,
+) => MakeInputTransformResult;
+
+export const makeInputTransform: MakeInputTransform = ({
+  transform,
+  execCommand = document.execCommand,
+  selectWhenDropped = true,
 }) => ({
-  applyTransform(input: Pick<HTMLInputElement, 'value'>) {
+  applyTransform(input) {
     const currentValue = input.value;
     const transformed = transform(currentValue);
     if (transformed !== '' && transformed !== currentValue) {
@@ -17,7 +30,7 @@ export const makeInputTransform = ({
     }
   },
 
-  handleBeforeInput(e: InputEvent) {
+  handleBeforeInput(e) {
     // Only handle these input types.
     if (
       e.inputType !== 'insertText' &&
@@ -89,7 +102,7 @@ export const makeInputTransform = ({
       transformedValueBeforeSelection +
       transformedValueWithinSelection +
       transformedValueAfterSelection;
-    
+
     if (transformedValue !== value) {
       input.value = transformedValue;
       // input.selectionStart = transformedValueBeforeSelection.length;
@@ -110,7 +123,7 @@ export const makeInputTransform = ({
     const value = input.value;
 
     const transformedValue = transform(value);
-    
+
     // Last resort action if the beforeinput/input events were
     // not respected e.g. when performing autocomplete.
     if (transformedValue !== value) {
@@ -119,7 +132,7 @@ export const makeInputTransform = ({
   },
 });
 
-export const makeInputTransformIdentity = (): ReturnType<typeof makeInputTransform> => ({
+export const makeInputTransformIdentity: MakeInputTransform = () => ({
   applyTransform() {},
   handleBeforeInput() {},
   handleInput() {},
