@@ -1,18 +1,59 @@
 import { useState } from 'react';
+import { ExampleGivenName } from './ExampleGivenName';
+import { ExampleMobile } from './ExampleMobile';
 import { ExampleNumeric } from './ExampleNumeric';
 import { ExampleUppercase } from './ExampleUppercase';
-import { ExampleMobile } from './ExampleMobile';
-import { ExampleGivenName } from './ExampleGivenName';
+import { ScenarioFilterDropText } from './category-filter/ScenarioFilterDropText';
+import { ScenarioFilterInsertText } from './category-filter/ScenarioFilterInsertText';
+import { ScenarioFilterReplaceText } from './category-filter/ScenarioFilterReplaceText';
+import { ScenarioReplaceDropText } from './category-replace/ScenarioReplaceDropText';
+import { ScenarioReplaceInsertText } from './category-replace/ScenarioReplaceInsertText';
+import { ScenarioReplaceReplaceText } from './category-replace/ScenarioReplaceReplaceText';
 
 const supportsExecCommand = typeof document.execCommand === 'function';
 
 export const App = () => {
   const [useExecCommand, setUseExecCommand] = useState(supportsExecCommand);
   const execCommand = useExecCommand ? document.execCommand : null;
-  
+
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <h1>Input transform test</h1>
+
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4rem',
+        margin: '4rem 0',
+      }}>
+        <div>
+          <h2>Category: Filter</h2>
+
+          <p>
+            These scenarios use a simple filter which only ever removes characters
+            and never replaces existing characters.
+          </p>
+        </div>
+
+        <ScenarioFilterInsertText />
+        <ScenarioFilterReplaceText />
+        <ScenarioFilterDropText />
+
+        <div>
+          <h2>Category: Replace</h2>
+
+          <p>
+            These scenarios use a more complex filter/replace transform which
+            removes some characters and replaces other characters.
+          </p>
+        </div>
+
+        <ScenarioReplaceInsertText />
+        <ScenarioReplaceReplaceText />
+        <ScenarioReplaceDropText />
+      </div>
+
+      <h2>More examples</h2>
 
       <label
         style={{
@@ -52,25 +93,25 @@ export const App = () => {
       <h2>Numeric input field example</h2>
 
       <p>Only numbers allowed. Max length of 10 digits.</p>
-      
+
       <ExampleNumeric execCommand={execCommand} />
 
       <h2>Phone number input field example</h2>
 
       <p>Similar to the previous example except the input is marked as being type "tel" and it has an autocomplete attribute.</p>
-      
+
       <ExampleMobile execCommand={execCommand} />
 
       <h2>Uppercase input field example</h2>
 
       <p>Letters, spaces, and quotes allowed. Letters will be made uppercase. Quotes will be normalized.</p>
-      
+
       <ExampleUppercase execCommand={execCommand} />
 
       <h2>Given name input field example</h2>
 
       <p>The same as the previous example except the input has an autocomplete attribute.</p>
-      
+
       <ExampleGivenName execCommand={execCommand} />
 
       <h2>Standard input</h2>

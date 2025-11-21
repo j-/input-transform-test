@@ -28,7 +28,7 @@ h1 {
 }
 
 body {
-  max-width: 70ch;
+  max-width: 120ch;
   padding: 1rem;
   margin: 1rem auto 4rem;
 }
@@ -38,6 +38,22 @@ input:is([type=text], [type=tel]) {
   box-sizing: border-box;
   padding: 1rem;
   font: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+}
+
+th, td {
+  padding: 1em;
+  border: 1px solid #888;
+  vertical-align: top;
+}
+
+td p {
+  margin: 0 0 1rem;
 }
 
 @media (prefers-color-scheme: light) {
