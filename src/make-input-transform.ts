@@ -27,10 +27,11 @@ export const makeInputTransform = ({
       return;
     }
 
-    const transformed = transform(e.data ?? '');
+    const eventData = e.data ?? '';
+    const transformed = transform(eventData);
 
     // 'Before' and 'after' match, nothing to do. Exit early.
-    if (transformed === e.data) return;
+    if (transformed === eventData) return;
 
     // Cancel the default insert.
     if (
