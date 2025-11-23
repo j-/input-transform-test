@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, InputHTMLAttributes } from 'react';
 import { InputNaiiveTransform } from '../InputNaiiveTransform';
 import { InputNoTransform } from '../InputNoTransform';
 import { InputWithExecCommand } from '../InputWithExecCommand';
@@ -9,7 +9,7 @@ const inputProps = {
   defaultValue: "",
   type: "text",
   autoCapitalize: "characters",
-} as const;
+} as const satisfies InputHTMLAttributes<HTMLInputElement>;
 
 export const ScenarioReplaceReplaceText: FC = () => {
   return (

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, InputHTMLAttributes } from 'react';
 import { InputNaiiveTransform } from '../InputNaiiveTransform';
 import { InputNoTransform } from '../InputNoTransform';
 import { InputWithExecCommand } from '../InputWithExecCommand';
@@ -10,7 +10,7 @@ const inputProps = {
   type: "text",
   inputMode: "numeric",
   pattern: "[0-9]*",
-} as const;
+} as const satisfies InputHTMLAttributes<HTMLInputElement>;
 
 export const ScenarioFilterReplaceText: FC = () => {
   return (

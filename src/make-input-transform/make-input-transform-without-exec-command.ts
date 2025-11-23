@@ -10,7 +10,7 @@ export const makeInputTransformWithoutExecCommand = ({
   applyTransform(input) {
     const currentValue = input.value;
     const transformed = transform(currentValue);
-    if (transformed !== '' && transformed !== currentValue) {
+    if (transformed !== currentValue) {
       input.value = transformed;
     }
   },
@@ -76,15 +76,8 @@ export const makeInputTransformWithoutExecCommand = ({
   },
 
   handleChange(e) {
-    const input = e.currentTarget as HTMLInputElement;
-    const value = input.value;
-
-    const transformedValue = transform(value);
-
     // Last resort action if the beforeinput/input events were
     // not respected e.g. when performing autocomplete.
-    if (transformedValue !== value) {
-      input.value = transformedValue;
-    }
+    this.applyTransform(e.currentTarget as HTMLInputElement);
   },
 });

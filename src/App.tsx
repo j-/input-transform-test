@@ -1,21 +1,13 @@
-import { useState } from 'react';
-import { ExampleGivenName } from './ExampleGivenName';
-import { ExampleMobile } from './ExampleMobile';
-import { ExampleNumeric } from './ExampleNumeric';
-import { ExampleUppercase } from './ExampleUppercase';
+import { ScenarioFilterAutocomplete } from './category-filter/ScenarioFilterAutocomplete';
 import { ScenarioFilterDropText } from './category-filter/ScenarioFilterDropText';
 import { ScenarioFilterInsertText } from './category-filter/ScenarioFilterInsertText';
 import { ScenarioFilterReplaceText } from './category-filter/ScenarioFilterReplaceText';
+import { ScenarioReplaceAutocomplete } from './category-replace/ScenarioReplaceAutocomplete';
 import { ScenarioReplaceDropText } from './category-replace/ScenarioReplaceDropText';
 import { ScenarioReplaceInsertText } from './category-replace/ScenarioReplaceInsertText';
 import { ScenarioReplaceReplaceText } from './category-replace/ScenarioReplaceReplaceText';
 
-const supportsExecCommand = typeof document.execCommand === 'function';
-
 export const App = () => {
-  const [useExecCommand, setUseExecCommand] = useState(supportsExecCommand);
-  const execCommand = useExecCommand ? document.execCommand : null;
-
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <h1>Input transform test</h1>
@@ -38,6 +30,7 @@ export const App = () => {
         <ScenarioFilterInsertText />
         <ScenarioFilterReplaceText />
         <ScenarioFilterDropText />
+        <ScenarioFilterAutocomplete />
 
         <div>
           <h2>Category: Replace</h2>
@@ -51,74 +44,8 @@ export const App = () => {
         <ScenarioReplaceInsertText />
         <ScenarioReplaceReplaceText />
         <ScenarioReplaceDropText />
+        <ScenarioReplaceAutocomplete />
       </div>
-
-      <h2>More examples</h2>
-
-      <label
-        style={{
-          display: 'inline-block',
-          boxSizing: 'border-box',
-          padding: '1rem',
-          marginBottom: '0.5rem',
-          border: '1px solid #ccc',
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={useExecCommand}
-          onChange={(e) => setUseExecCommand(e.currentTarget.checked)}
-          disabled={!supportsExecCommand}
-        />
-        {' '}
-        <span>Use <strong>exec command</strong> API</span>
-      </label>
-
-      <p>Things to try for each of the tests below:</p>
-
-      <ol>
-        <li>Insert valid/invalid characters at the start of the input, the end of the input, and within the middle of the input value.</li>
-
-        <li>Highlight part of the input value and try to insert valid/invalid characters.</li>
-
-        <li>Backspace or delete from the middle of the input value or with characters highlighted.</li>
-
-        <li>Try cutting+pasting text into the middle of the textbox.</li>
-
-        <li>Click to drag+drop text into the textbox.</li>
-
-        <li>Try Undo+Redo (Cmd+Z etc).</li>
-      </ol>
-
-      <h2>Numeric input field example</h2>
-
-      <p>Only numbers allowed. Max length of 10 digits.</p>
-
-      <ExampleNumeric execCommand={execCommand} />
-
-      <h2>Phone number input field example</h2>
-
-      <p>Similar to the previous example except the input is marked as being type "tel" and it has an autocomplete attribute.</p>
-
-      <ExampleMobile execCommand={execCommand} />
-
-      <h2>Uppercase input field example</h2>
-
-      <p>Letters, spaces, and quotes allowed. Letters will be made uppercase. Quotes will be normalized.</p>
-
-      <ExampleUppercase execCommand={execCommand} />
-
-      <h2>Given name input field example</h2>
-
-      <p>The same as the previous example except the input has an autocomplete attribute.</p>
-
-      <ExampleGivenName execCommand={execCommand} />
-
-      <h2>Standard input</h2>
-
-      <p>For reference, a regular HTML input element with no transform rules.</p>
-
-      <input type="text" defaultValue="" />
 
       <h2>What is "exec command" API?</h2>
 

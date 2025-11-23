@@ -5,8 +5,8 @@ import type {
 
 export const makeInputTransformWithExecCommand = ({
   transform,
-  execCommand,
-  document: documentOption = document,
+  document = globalThis.document,
+  execCommand = document.execCommand,
   selectWhenDropped = true,
 }: MakeInputTransformOptionsWithExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
@@ -42,7 +42,7 @@ export const makeInputTransformWithExecCommand = ({
     if (transformed === '') return;
 
     // Use execCommand to insert the transformed text. Preserves history stack.
-    execCommand.call(documentOption, 'insertText', false, transformed);
+    execCommand.call(document, 'insertText', false, transformed);
 
     if (selectWhenDropped && e.inputType === 'insertFromDrop') {
       const input = e.currentTarget as HTMLInputElement;
