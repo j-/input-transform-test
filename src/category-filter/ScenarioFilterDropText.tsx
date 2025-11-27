@@ -39,12 +39,55 @@ export const ScenarioFilterDropText: FC = () => {
           display: 'inline-block',
           border: '1px solid #888',
           padding: '0.5rem',
+          marginRight: '0.5rem',
           borderRadius: '0.25rem',
           cursor: 'move',
           backgroundColor: 'inherit',
         }}
       >
         This document was written in November 2025.
+      </p>
+
+      <p
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData(
+            'text/plain',
+            e.currentTarget.textContent ?? '',
+          );
+        }}
+        style={{
+          display: 'inline-block',
+          border: '1px solid #888',
+          padding: '0.5rem',
+          marginRight: '0.5rem',
+          borderRadius: '0.25rem',
+          cursor: 'move',
+          backgroundColor: 'inherit',
+        }}
+      >
+        This example is text-only and the next is digits-only.
+      </p>
+
+      <p
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData(
+            'text/plain',
+            e.currentTarget.textContent ?? '',
+          );
+        }}
+        style={{
+          display: 'inline-block',
+          border: '1px solid #888',
+          padding: '0.5rem',
+          marginRight: '0.5rem',
+          borderRadius: '0.25rem',
+          cursor: 'move',
+          backgroundColor: 'inherit',
+        }}
+      >
+        0411222333
       </p>
 
       <table>

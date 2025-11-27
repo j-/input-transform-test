@@ -1,3 +1,10 @@
+import {
+  getInputEventInputData,
+  isInputEvent,
+  isInsertFromDropEvent,
+  isInsertFromPasteEvent,
+  isInsertTextEvent,
+} from './event';
 import type {
   MakeInputTransformOptionsWithoutExecCommand,
   MakeInputTransformResult,
@@ -15,69 +22,112 @@ export const makeInputTransformWithoutExecCommand = ({
     }
   },
 
+  /**
+   * Responsible for preventing user input unless input data contains
+   * valid characters. For example if the input expects numbers only
+   * and the user presses the "A" key on their keyboard this should
+   * be prevented. It would be stripped by the `input` event handler
+   * anyway but this addresses the case where a portion of the input
+   * text is highlighted, the user presses an invalid key, and that
+   * portion is deleted without any new characters being entered.
+   */
   handleBeforeInput(e) {
     // Only handle these input types.
     if (
-      e.inputType !== 'insertText' &&
-      e.inputType !== 'insertFromPaste' &&
-      e.inputType !== 'insertFromDrop'
+      isInsertTextEvent(e) ||
+      isInsertFromPasteEvent(e) ||
+      isInsertFromDropEvent(e)
     ) {
-      return;
-    }
+      const eventData = getInputEventInputData(e);
+      const transformed = transform(eventData);
 
-    const eventData = e.data ?? '';
-    const transformed = transform(eventData);
-
-    // 'Before' and 'after' match, nothing to do. Exit early.
-    if (transformed === eventData) return;
-
-    // Cancel the default insert.
-    if (!transformed) {
-      e.preventDefault();
-    }
-
-    // Transformed data may be empty e.g. inserting a single disallowed char.
-    // Ignore these inputs to prevent selected text from being deleted without
-    // a clear reason.
-    if (transformed === '') return;
-  },
-
-  handleInput(e) {
-    const input = e.currentTarget as HTMLInputElement;
-    const { inputType } = e as InputEvent;
-    const { value, selectionStart, selectionEnd } = input;
-
-    const valueBeforeSelection = value.substring(0, selectionStart ?? 0);
-    const valueWithinSelection = value.substring(selectionStart ?? 0, selectionEnd ?? 0);
-    const valueAfterSelection = value.substring(selectionEnd ?? 0);
-
-    const transformedValueBeforeSelection = transform(valueBeforeSelection);
-
-    const transformedValueWithinSelection = inputType === 'insertFromDrop' ?
-      transform(valueWithinSelection) :
-      '';
-
-    const transformedValueAfterSelection = transform(valueAfterSelection);
-
-    const transformedValue = transformedValueBeforeSelection +
-      transformedValueWithinSelection +
-      transformedValueAfterSelection;
-
-    if (transformedValue !== value) {
-      input.value = transformedValue;
-      if (inputType !== 'insertFromDrop' || selectWhenDropped) {
-        input.setSelectionRange(
-          transformedValueBeforeSelection.length,
-          transformedValueBeforeSelection.length +
-          transformedValueWithinSelection.length
-        );
+      // If all the input data is stripped by the transform function
+      // then none of the input is valid in which case it should be
+      // prevented. If this condition is not met it means the input
+      // data will be manipulated by the `input` handler below.
+      if (!transformed) {
+        e.preventDefault();
       }
     }
   },
 
-  handleChange(e) {
-    // Last resort action if the beforeinput/input events were
-    // not respected e.g. when performing autocomplete.
-    this.applyTransform(e.currentTarget as HTMLInputElement);
+  /**
+   * Manipulates the data the customer has entered before it is
+   * actuallly entered into the field by transforming/filtering
+   * characters. Updates the caret position and selection range
+   * accordingly.
+   */
+  handleInput(e) {
+    // Handle autocomplete events which trigger `input`
+    // but are not actually of type `InputEvent`.
+    // Just performs a naiive transform.
+    if (!isInputEvent(e)) {
+      const input = e.currentTarget as HTMLInputElement;
+      const currentValue = input.value;
+      const transformed = transform(currentValue);
+
+      if (transformed !== currentValue) {
+        input.value = transformed;
+      }
+
+      return;
+    }
+
+    const input = e.currentTarget as HTMLInputElement;
+    const value = input.value;
+    
+    const selectionStart = input.selectionStart ?? value.length;
+    const selectionEnd = input.selectionEnd ?? value.length;
+
+    const valueBeforeSelection = value.substring(0, selectionStart);
+    const valueWithinSelection = value.substring(selectionStart, selectionEnd);
+    const valueAfterSelection = value.substring(selectionEnd);
+
+    if (isInsertTextEvent(e) || isInsertFromPasteEvent(e)) {
+      const transformedValueBeforeSelection = transform(valueBeforeSelection);
+      const transformedValueAfterSelection = transform(valueAfterSelection);
+  
+      const transformedValue = transformedValueBeforeSelection +
+        transformedValueAfterSelection;
+  
+      if (transformedValue !== value) {
+        input.value = transformedValue;
+        
+        input.setSelectionRange(
+          transformedValueBeforeSelection.length,
+          transformedValueBeforeSelection.length,
+        );
+      }
+
+      return;
+    }
+
+    if (isInsertFromDropEvent(e)) {
+      const transformedValueBeforeSelection = transform(valueBeforeSelection);
+      const transformedValueWithinSelection = transform(valueWithinSelection);
+      const transformedValueAfterSelection = transform(valueAfterSelection);
+  
+      const transformedValue = (
+        transformedValueBeforeSelection +
+        transformedValueWithinSelection +
+        transformedValueAfterSelection
+      );
+  
+      if (transformedValue !== value) {
+        input.value = transformedValue;
+
+        if (selectWhenDropped) {
+          input.setSelectionRange(
+            transformedValueBeforeSelection.length,
+            transformedValueBeforeSelection.length +
+            transformedValueWithinSelection.length
+          );
+        }
+      }
+
+      return;
+    }
   },
+
+  handleChange() {},
 });
