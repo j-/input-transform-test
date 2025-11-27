@@ -1,3 +1,5 @@
+import type { SyntheticEvent } from "react";
+
 export type StringTransform = (input: string) => string;
 
 export type MakeInputTransformOptionsWithoutExecCommand = {
@@ -21,6 +23,6 @@ export type MakeInputTransformOptions = {
 
 export type MakeInputTransformResult = {
   applyTransform(input: Pick<HTMLInputElement, 'value'>): void;
-  handleBeforeInput(e: InputEvent): void;
-  handleInput(e: Event | InputEvent): void;
+  handleBeforeInput(e: Event | SyntheticEvent): void;
+  handleInput(e: Event | SyntheticEvent): void;
 };

@@ -1,3 +1,4 @@
+import type { SyntheticEvent } from 'react';
 import {
   COMMAND_INSERT_FROM_DROP,
   COMMAND_INSERT_FROM_PASTE,
@@ -38,6 +39,9 @@ export const isInputEvent = (
   // Must contain data.
   getEventInputData(event) != null;
 
+export const isTextInputEvent = (event: Event): boolean =>
+  event.type === 'textInput';
+
 export const getInputEventInputType = <T extends InputEvent>(
   event: T
 ): T['inputType'] => event.inputType;
@@ -60,3 +64,11 @@ export const isInsertTextEvent = (
   event: Event
 ): event is InputEvent & { inputType: typeof COMMAND_INSERT_TEXT; data: string; } =>
   isInputEvent(event) && isCommandInsertText(event.inputType);
+
+export function unwrapEvent<T extends Event>(nativeEvent: T): T;
+export function unwrapEvent<T extends SyntheticEvent>(syntheticEvent: T): T['nativeEvent'];
+export function unwrapEvent(maybeSyntheticEvent: Event | SyntheticEvent): Event;
+export function unwrapEvent(maybeSyntheticEvent: Event | SyntheticEvent): Event {
+  const nativeEvent = (maybeSyntheticEvent as SyntheticEvent).nativeEvent;
+  return nativeEvent ?? maybeSyntheticEvent;
+}

@@ -1,10 +1,12 @@
 import { COMMAND_INSERT_TEXT } from './constants';
 import {
-  getInputEventInputData,
+  getEventInputData,
   isInputEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
   isInsertTextEvent,
+  isTextInputEvent,
+  unwrapEvent,
 } from './event';
 import type {
   MakeInputTransformOptionsWithExecCommand,
@@ -39,14 +41,19 @@ export const makeInputTransformWithExecCommand = ({
    * characters. Updates the caret position and selection range
    * accordingly.
    */
-  handleBeforeInput(e) {
+  handleBeforeInput(maybeSyntheticEvent) {
+    const e = unwrapEvent(maybeSyntheticEvent);
+
     // Only handle these input types.
     if (
+      // React "on input" event.
+      isTextInputEvent(e) ||
+      // Native "on input" events.
       isInsertTextEvent(e) ||
       isInsertFromPasteEvent(e) ||
       isInsertFromDropEvent(e)
     ) {
-      const eventData = getInputEventInputData(e);
+      const eventData = getEventInputData(e) ?? '';
       const transformed = transform(eventData);
 
       // 'Before' and 'after' match, nothing to do. Exit early.
@@ -64,7 +71,7 @@ export const makeInputTransformWithExecCommand = ({
       insertText(document, execCommand, transformed);
 
       if (isInsertFromDropEvent(e) && selectWhenDropped) {
-        const input = e.currentTarget as HTMLInputElement;
+        const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
         const currentValue = input.value;
         
         const selectionEnd = input.selectionStart ?? currentValue.length;
@@ -75,12 +82,14 @@ export const makeInputTransformWithExecCommand = ({
     }
   },
 
-  handleInput(e) {
+  handleInput(maybeSyntheticEvent) {
+    const e = unwrapEvent(maybeSyntheticEvent);
+
     // Handle autocomplete events which trigger `input`
     // but are not actually of type `InputEvent`.
     // Just performs a naiive transform.
-    if (!isInputEvent(e)) {
-      const input = e.currentTarget as HTMLInputElement;
+    if (!isInputEvent(e) && !isTextInputEvent(e)) {
+      const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
       const currentValue = input.value;
       const transformed = transform(currentValue);
 

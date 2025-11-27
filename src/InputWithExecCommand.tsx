@@ -26,17 +26,14 @@ export const InputWithExecCommand: FC<
     if (!input) return;
 
     applyTransform(input);
-
-    input.addEventListener('beforeinput', handleBeforeInput);
-    input.addEventListener('input', handleInput);
-
-    return () => {
-      input.removeEventListener('beforeinput', handleBeforeInput);
-      input.removeEventListener('input', handleInput);
-    };
   }, [applyTransform, handleBeforeInput, handleInput]);
 
   return (
-    <input ref={inputRef} {...props} />
+    <input
+      ref={inputRef}
+      onBeforeInput={handleBeforeInput}
+      onInput={handleInput}
+      {...props}
+    />
   );
 };

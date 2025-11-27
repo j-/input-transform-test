@@ -1,9 +1,11 @@
 import {
-  getInputEventInputData,
+  getEventInputData,
   isInputEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
   isInsertTextEvent,
+  isTextInputEvent,
+  unwrapEvent,
 } from './event';
 import type {
   MakeInputTransformOptionsWithoutExecCommand,
@@ -31,14 +33,19 @@ export const makeInputTransformWithoutExecCommand = ({
    * text is highlighted, the user presses an invalid key, and that
    * portion is deleted without any new characters being entered.
    */
-  handleBeforeInput(e) {
+  handleBeforeInput(maybeSyntheticEvent) {
+    const e = unwrapEvent(maybeSyntheticEvent);
+
     // Only handle these input types.
     if (
+      // React "on input" event.
+      isTextInputEvent(e) ||
+      // Native "on input" events.
       isInsertTextEvent(e) ||
       isInsertFromPasteEvent(e) ||
       isInsertFromDropEvent(e)
     ) {
-      const eventData = getInputEventInputData(e);
+      const eventData = getEventInputData(e) ?? '';
       const transformed = transform(eventData);
 
       // If all the input data is stripped by the transform function
@@ -57,12 +64,14 @@ export const makeInputTransformWithoutExecCommand = ({
    * characters. Updates the caret position and selection range
    * accordingly.
    */
-  handleInput(e) {
+  handleInput(maybeSyntheticEvent) {
+    const e = unwrapEvent(maybeSyntheticEvent);
+
     // Handle autocomplete events which trigger `input`
     // but are not actually of type `InputEvent`.
     // Just performs a naiive transform.
     if (!isInputEvent(e)) {
-      const input = e.currentTarget as HTMLInputElement;
+      const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
       const currentValue = input.value;
       const transformed = transform(currentValue);
 
@@ -73,7 +82,7 @@ export const makeInputTransformWithoutExecCommand = ({
       return;
     }
 
-    const input = e.currentTarget as HTMLInputElement;
+    const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
     const value = input.value;
     
     const selectionStart = input.selectionStart ?? value.length;
@@ -83,7 +92,7 @@ export const makeInputTransformWithoutExecCommand = ({
     const valueWithinSelection = value.substring(selectionStart, selectionEnd);
     const valueAfterSelection = value.substring(selectionEnd);
 
-    if (isInsertTextEvent(e) || isInsertFromPasteEvent(e)) {
+    if (isTextInputEvent(e) || isInsertTextEvent(e) || isInsertFromPasteEvent(e)) {
       const transformedValueBeforeSelection = transform(valueBeforeSelection);
       const transformedValueAfterSelection = transform(valueAfterSelection);
   
