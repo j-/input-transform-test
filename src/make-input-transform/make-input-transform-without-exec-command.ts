@@ -3,6 +3,7 @@ import {
   isInputEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
+  isInsertReplacementTextEvent,
   isInsertTextEvent,
   isTextInputEvent,
   unwrapEvent,
@@ -92,7 +93,12 @@ export const makeInputTransformWithoutExecCommand = ({
     const valueWithinSelection = currentValue.substring(selectionStart, selectionEnd);
     const valueAfterSelection = currentValue.substring(selectionEnd);
 
-    if (isTextInputEvent(e) || isInsertTextEvent(e) || isInsertFromPasteEvent(e)) {
+    if (
+      isInsertTextEvent(e) ||
+      isInsertFromPasteEvent(e) ||
+      isInsertReplacementTextEvent(e) ||
+      isTextInputEvent(e)
+    ) {
       const transformedValueBeforeSelection = transform(valueBeforeSelection);
       const transformedValueAfterSelection = transform(valueAfterSelection);
   

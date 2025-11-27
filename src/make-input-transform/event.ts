@@ -2,6 +2,7 @@ import type { SyntheticEvent } from 'react';
 import {
   COMMAND_INSERT_FROM_DROP,
   COMMAND_INSERT_FROM_PASTE,
+  COMMAND_INSERT_REPLACEMENT_TEXT,
   COMMAND_INSERT_TEXT,
 } from './constants';
 
@@ -14,6 +15,11 @@ export const isCommandInsertFromPaste = (
   command: string
 ): command is typeof COMMAND_INSERT_FROM_PASTE =>
   command === COMMAND_INSERT_FROM_PASTE;
+
+export const isCommandInsertReplacementText = (
+  command: string
+): command is typeof COMMAND_INSERT_REPLACEMENT_TEXT =>
+  command === COMMAND_INSERT_REPLACEMENT_TEXT;
 
 export const isCommandInsertText = (
   command: string
@@ -59,6 +65,11 @@ export const isInsertFromPasteEvent = (
   event: Event
 ): event is InputEvent & { inputType: typeof COMMAND_INSERT_FROM_PASTE; data: string; } =>
   isInputEvent(event) && isCommandInsertFromPaste(event.inputType);
+
+export const isInsertReplacementTextEvent = (
+  event: Event
+): event is InputEvent & { inputType: typeof COMMAND_INSERT_REPLACEMENT_TEXT; data: string; } =>
+  isInputEvent(event) && isCommandInsertReplacementText(event.inputType);
 
 export const isInsertTextEvent = (
   event: Event

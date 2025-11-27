@@ -4,6 +4,7 @@ import {
   isInputEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
+  isInsertReplacementTextEvent,
   isInsertTextEvent,
   isTextInputEvent,
   unwrapEvent,
@@ -85,10 +86,14 @@ export const makeInputTransformWithExecCommand = ({
   handleInput(maybeSyntheticEvent) {
     const e = unwrapEvent(maybeSyntheticEvent);
 
-    // Handle autocomplete events which trigger `input`
-    // but are not actually of type `InputEvent`.
-    // Just performs a naiive transform.
-    if (!isInputEvent(e) && !isTextInputEvent(e)) {
+    if (
+      // Handle autocomplete events which trigger `input`
+      // but are not actually of type `InputEvent`.
+      (!isInputEvent(e) && !isTextInputEvent(e)) ||
+      // Spell check will also trigger `input` event
+      // without a corresponding `beforeinput` event.
+      isInsertReplacementTextEvent(e)
+    ) {
       const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
       const currentValue = input.value;
       const transformedValue = transform(currentValue);
