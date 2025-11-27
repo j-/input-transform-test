@@ -94,6 +94,9 @@ export const makeInputTransformWithExecCommand = ({
       const transformedValue = transform(currentValue);
 
       if (transformedValue !== currentValue) {
+        // Use value assignment instead of execCommand to align
+        // with Chrome's default behavior disallowing Cmd+Z when
+        // the field has been autocompleted.
         input.value = transformedValue;
       }
     }
