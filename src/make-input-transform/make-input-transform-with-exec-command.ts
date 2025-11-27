@@ -29,9 +29,9 @@ export const makeInputTransformWithExecCommand = ({
 }: MakeInputTransformOptionsWithExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
     const currentValue = input.value;
-    const transformed = transform(currentValue);
-    if (transformed !== '' && transformed !== currentValue) {
-      input.value = transformed;
+    const transformedValue = transform(currentValue);
+    if (transformedValue !== '' && transformedValue !== currentValue) {
+      input.value = transformedValue;
     }
   },
 
@@ -53,11 +53,11 @@ export const makeInputTransformWithExecCommand = ({
       isInsertFromPasteEvent(e) ||
       isInsertFromDropEvent(e)
     ) {
-      const eventData = getEventInputData(e) ?? '';
-      const transformed = transform(eventData);
+      const inputData = getEventInputData(e) ?? '';
+      const transformedData = transform(inputData);
 
       // 'Before' and 'after' match, nothing to do. Exit early.
-      if (transformed === eventData) return;
+      if (transformedData === inputData) return;
 
       // Cancel the default insert.
       e.preventDefault();
@@ -65,17 +65,17 @@ export const makeInputTransformWithExecCommand = ({
       // Transformed data may be empty e.g. inserting a single disallowed char.
       // Ignore these inputs to prevent selected text from being deleted without
       // a clear reason.
-      if (!transformed) return;
+      if (!transformedData) return;
 
       // Use execCommand to insert the transformed text. Preserves history stack.
-      insertText(document, execCommand, transformed);
+      insertText(document, execCommand, transformedData);
 
       if (isInsertFromDropEvent(e) && selectWhenDropped) {
         const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
         const currentValue = input.value;
         
         const selectionEnd = input.selectionStart ?? currentValue.length;
-        const selectionStart = selectionEnd - transformed.length;
+        const selectionStart = selectionEnd - transformedData.length;
 
         input.setSelectionRange(selectionStart, selectionEnd);
       }
@@ -91,10 +91,10 @@ export const makeInputTransformWithExecCommand = ({
     if (!isInputEvent(e) && !isTextInputEvent(e)) {
       const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
       const currentValue = input.value;
-      const transformed = transform(currentValue);
+      const transformedValue = transform(currentValue);
 
-      if (transformed !== currentValue) {
-        input.value = transformed;
+      if (transformedValue !== currentValue) {
+        input.value = transformedValue;
       }
     }
   },

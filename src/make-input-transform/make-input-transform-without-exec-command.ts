@@ -18,9 +18,9 @@ export const makeInputTransformWithoutExecCommand = ({
 }: MakeInputTransformOptionsWithoutExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
     const currentValue = input.value;
-    const transformed = transform(currentValue);
-    if (transformed !== currentValue) {
-      input.value = transformed;
+    const transformedValue = transform(currentValue);
+    if (transformedValue !== currentValue) {
+      input.value = transformedValue;
     }
   },
 
@@ -45,14 +45,14 @@ export const makeInputTransformWithoutExecCommand = ({
       isInsertFromPasteEvent(e) ||
       isInsertFromDropEvent(e)
     ) {
-      const eventData = getEventInputData(e) ?? '';
-      const transformed = transform(eventData);
+      const inputData = getEventInputData(e) ?? '';
+      const transformedData = transform(inputData);
 
       // If all the input data is stripped by the transform function
       // then none of the input is valid in which case it should be
       // prevented. If this condition is not met it means the input
       // data will be manipulated by the `input` handler below.
-      if (!transformed) {
+      if (!transformedData) {
         e.preventDefault();
       }
     }
@@ -73,33 +73,35 @@ export const makeInputTransformWithoutExecCommand = ({
     if (!isInputEvent(e)) {
       const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
       const currentValue = input.value;
-      const transformed = transform(currentValue);
+      const transformedValue = transform(currentValue);
 
-      if (transformed !== currentValue) {
-        input.value = transformed;
+      if (transformedValue !== currentValue) {
+        input.value = transformedValue;
       }
 
       return;
     }
 
     const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
-    const value = input.value;
+    const currentValue = input.value;
     
-    const selectionStart = input.selectionStart ?? value.length;
-    const selectionEnd = input.selectionEnd ?? value.length;
+    const selectionStart = input.selectionStart ?? currentValue.length;
+    const selectionEnd = input.selectionEnd ?? currentValue.length;
 
-    const valueBeforeSelection = value.substring(0, selectionStart);
-    const valueWithinSelection = value.substring(selectionStart, selectionEnd);
-    const valueAfterSelection = value.substring(selectionEnd);
+    const valueBeforeSelection = currentValue.substring(0, selectionStart);
+    const valueWithinSelection = currentValue.substring(selectionStart, selectionEnd);
+    const valueAfterSelection = currentValue.substring(selectionEnd);
 
     if (isTextInputEvent(e) || isInsertTextEvent(e) || isInsertFromPasteEvent(e)) {
       const transformedValueBeforeSelection = transform(valueBeforeSelection);
       const transformedValueAfterSelection = transform(valueAfterSelection);
   
-      const transformedValue = transformedValueBeforeSelection +
-        transformedValueAfterSelection;
+      const transformedValue = (
+        transformedValueBeforeSelection +
+        transformedValueAfterSelection
+      );
   
-      if (transformedValue !== value) {
+      if (transformedValue !== currentValue) {
         input.value = transformedValue;
         
         input.setSelectionRange(
@@ -122,7 +124,7 @@ export const makeInputTransformWithoutExecCommand = ({
         transformedValueAfterSelection
       );
   
-      if (transformedValue !== value) {
+      if (transformedValue !== currentValue) {
         input.value = transformedValue;
 
         if (selectWhenDropped) {

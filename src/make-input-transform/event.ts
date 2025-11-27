@@ -39,14 +39,14 @@ export const isInputEvent = (
   // Must contain data.
   getEventInputData(event) != null;
 
-export const isTextInputEvent = (event: Event): boolean =>
+export const isTextInputEvent = (event: Pick<Event, 'type'>): boolean =>
   event.type === 'textInput';
 
-export const getInputEventInputType = <T extends InputEvent>(
+export const getInputEventInputType = <T extends Pick<InputEvent, 'inputType'>>(
   event: T
 ): T['inputType'] => event.inputType;
 
-export const getInputEventInputData = <T extends InputEvent>(
+export const getInputEventInputData = <T extends Pick<InputEvent, 'data'>>(
   event: T
 ): T['data'] => event.data;
   
