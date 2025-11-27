@@ -23,5 +23,4 @@ export type MakeInputTransformResult = {
   applyTransform(input: Pick<HTMLInputElement, 'value'>): void;
   handleBeforeInput(e: InputEvent): void;
   handleInput(e: Event | InputEvent): void;
-  handleChange(e: Event): void;
 };

@@ -53,7 +53,7 @@ export const makeInputTransformWithoutExecCommand = ({
 
   /**
    * Manipulates the data the customer has entered before it is
-   * actuallly entered into the field by transforming/filtering
+   * actually entered into the field by transforming/filtering
    * characters. Updates the caret position and selection range
    * accordingly.
    */
@@ -128,6 +128,4 @@ export const makeInputTransformWithoutExecCommand = ({
       return;
     }
   },
-
-  handleChange() {},
 });

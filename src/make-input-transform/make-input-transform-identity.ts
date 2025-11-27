@@ -4,5 +4,4 @@ export const makeInputTransformIdentity = (): MakeInputTransformResult => ({
   applyTransform() {},
   handleBeforeInput() {},
   handleInput() {},
-  handleChange() {},
 });

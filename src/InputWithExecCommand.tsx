@@ -14,7 +14,6 @@ export const InputWithExecCommand: FC<
     applyTransform,
     handleBeforeInput,
     handleInput,
-    handleChange,
   } = useMemo(() => {
     return makeInputTransform({
       transform,
@@ -30,14 +29,12 @@ export const InputWithExecCommand: FC<
 
     input.addEventListener('beforeinput', handleBeforeInput);
     input.addEventListener('input', handleInput);
-    input.addEventListener('change', handleChange);
 
     return () => {
       input.removeEventListener('beforeinput', handleBeforeInput);
       input.removeEventListener('input', handleInput);
-      input.removeEventListener('change', handleChange);
     };
-  }, [applyTransform, handleBeforeInput, handleInput, handleChange]);
+  }, [applyTransform, handleBeforeInput, handleInput]);
 
   return (
     <input ref={inputRef} {...props} />
