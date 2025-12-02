@@ -41,16 +41,31 @@ export const ScenarioFilterAutocomplete: FC = () => {
         <tbody>
           <tr>
             <td>
-              <InputNoTransform {...inputProps} />
+              <InputNoTransform
+                {...inputProps}
+                autoComplete={`section-a ${inputProps.autoComplete}`}
+              />
             </td>
             <td>
-              <InputNaiiveTransform {...inputProps} transform={transform} />
+              <InputNaiiveTransform
+                {...inputProps}
+                transform={transform}
+                autoComplete={`section-b ${inputProps.autoComplete}`}
+              />
             </td>
             <td>
-              <InputWithoutExecCommand {...inputProps} transform={transform} />
+              <InputWithoutExecCommand
+                {...inputProps}
+                transform={transform}
+                autoComplete={`section-c ${inputProps.autoComplete}`}
+              />
             </td>
             <td>
-              <InputWithExecCommand {...inputProps} transform={transform} />
+              <InputWithExecCommand
+                {...inputProps}
+                transform={transform}
+                autoComplete={`section-d ${inputProps.autoComplete}`}
+              />
             </td>
           </tr>
           <tr>
