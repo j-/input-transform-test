@@ -25,14 +25,19 @@ export const InputWithoutExecCommand: FC<
     if (!input) return;
 
     applyTransform(input);
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    input.addEventListener('beforeinput', handleBeforeInput, { signal });
+    input.addEventListener('input', handleInput, { signal });
+
+    return () => {
+      controller.abort();
+    };
   }, [applyTransform, handleBeforeInput, handleInput]);
 
   return (
-    <input
-      ref={inputRef}
-      onBeforeInput={handleBeforeInput}
-      onInput={handleInput}
-      {...props}
-    />
+    <input ref={inputRef} {...props} />
   );
 };

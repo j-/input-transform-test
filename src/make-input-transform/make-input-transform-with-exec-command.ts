@@ -1,10 +1,8 @@
 import { COMMAND_INSERT_TEXT } from './constants';
 import {
   getEventInputData,
-  isInputEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
-  isInsertReplacementTextEvent,
   isInsertTextEvent,
   isTextInputEvent,
   unwrapEvent,
@@ -83,27 +81,14 @@ export const makeInputTransformWithExecCommand = ({
     }
   },
 
+  /** Fallback to ensure input is transformed even if previous step fails. */
   handleInput(maybeSyntheticEvent) {
-    const e = unwrapEvent(maybeSyntheticEvent);
+    const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+    const currentValue = input.value;
+    const transformedValue = transform(currentValue);
 
-    if (
-      // Handle autocomplete events which trigger `input`
-      // but are not actually of type `InputEvent`.
-      (!isInputEvent(e) && !isTextInputEvent(e)) ||
-      // Spell check will also trigger `input` event
-      // without a corresponding `beforeinput` event.
-      isInsertReplacementTextEvent(e)
-    ) {
-      const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
-      const currentValue = input.value;
-      const transformedValue = transform(currentValue);
-
-      if (transformedValue !== currentValue) {
-        // Use value assignment instead of execCommand to align
-        // with Chrome's default behavior disallowing Cmd+Z when
-        // the field has been autocompleted.
-        input.value = transformedValue;
-      }
+    if (transformedValue !== currentValue) {
+      input.value = transformedValue;
     }
   },
 });
