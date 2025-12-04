@@ -1,3 +1,4 @@
+import { debugEvent } from './debug';
 import {
   getEventInputData,
   isInputEvent,
@@ -35,6 +36,8 @@ export const makeInputTransformWithoutExecCommand = ({
    * portion is deleted without any new characters being entered.
    */
   handleBeforeInput(maybeSyntheticEvent) {
+    debugEvent(maybeSyntheticEvent);
+
     const e = unwrapEvent(maybeSyntheticEvent);
 
     // Only handle these input types.
@@ -66,6 +69,8 @@ export const makeInputTransformWithoutExecCommand = ({
    * accordingly.
    */
   handleInput(maybeSyntheticEvent) {
+    debugEvent(maybeSyntheticEvent);
+
     const e = unwrapEvent(maybeSyntheticEvent);
 
     // Handle autocomplete events which trigger `input`
