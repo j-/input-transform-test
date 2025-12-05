@@ -8,6 +8,7 @@ import {
   isTextInputEvent,
   unwrapEvent,
 } from './event';
+import { makeExecCommandNative } from './exec-command';
 import type {
   MakeInputTransformOptionsWithExecCommand,
   MakeInputTransformResult,
@@ -23,8 +24,7 @@ const insertText = (
 
 export const makeInputTransformWithExecCommand = ({
   transform,
-  document = globalThis.document,
-  execCommand = document.execCommand,
+  makeExecCommand = makeExecCommandNative,
   selectWhenDropped = true,
 }: MakeInputTransformOptionsWithExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
@@ -69,18 +69,23 @@ export const makeInputTransformWithExecCommand = ({
       // a clear reason.
       if (!transformedData) return;
 
+      const execCommand = makeExecCommand(
+        maybeSyntheticEvent.currentTarget as HTMLInputElement,
+        isInsertFromDropEvent(e) && selectWhenDropped ? 'select' : 'end',
+      );
+
       // Use execCommand to insert the transformed text. Preserves history stack.
       insertText(document, execCommand, transformedData);
 
-      if (isInsertFromDropEvent(e) && selectWhenDropped) {
-        const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
-        const currentValue = input.value;
+      // if (isInsertFromDropEvent(e) && selectWhenDropped) {
+      //   const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+      //   const currentValue = input.value;
         
-        const selectionEnd = input.selectionStart ?? currentValue.length;
-        const selectionStart = selectionEnd - transformedData.length;
+      //   const selectionEnd = input.selectionStart ?? currentValue.length;
+      //   const selectionStart = selectionEnd - transformedData.length;
 
-        input.setSelectionRange(selectionStart, selectionEnd);
-      }
+      //   input.setSelectionRange(selectionStart, selectionEnd);
+      // }
     }
   },
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, type FC, type InputHTMLAttributes } from 'react';
 import { makeInputTransform, type StringTransform } from './make-input-transform';
+import { makeExecCommandNative } from './make-input-transform/exec-command';
 
 export const InputWithExecCommand: FC<
   InputHTMLAttributes<HTMLInputElement> &
@@ -17,7 +18,7 @@ export const InputWithExecCommand: FC<
   } = useMemo(() => {
     return makeInputTransform({
       transform,
-      execCommand: document.execCommand,
+      makeExecCommand: makeExecCommandNative,
     });
   }, [transform]);
 

@@ -1,6 +1,18 @@
-import type { SyntheticEvent } from "react";
+import type { SyntheticEvent } from 'react';
 
 export type StringTransform = (input: string) => string;
+
+export type ExecCommand = (
+  this: Document,
+  commandId: string,
+  showUI?: boolean | undefined,
+  value?: string | undefined,
+) => boolean;
+
+export type MakeExecCommand = (
+  activeElement?: Element | null,
+  selectionMode?: SelectionMode,
+) => ExecCommand;
 
 export type MakeInputTransformOptionsWithoutExecCommand = {
   transform: StringTransform;
@@ -10,15 +22,13 @@ export type MakeInputTransformOptionsWithoutExecCommand = {
 export type MakeInputTransformOptionsWithExecCommand = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
-  execCommand: Document['execCommand'];
-  document?: Document;
+  makeExecCommand?: MakeExecCommand;
 };
 
 export type MakeInputTransformOptions = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
-  execCommand?: Document['execCommand'] | null;
-  document?: Document;
+  makeExecCommand?: MakeExecCommand;
 };
 
 export type MakeInputTransformResult = {
