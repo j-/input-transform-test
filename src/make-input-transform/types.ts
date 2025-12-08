@@ -7,6 +7,13 @@ export type EventPhase = TargetPhase | NonTargetPhase;
 
 export type StringTransform = (input: string) => string;
 
+export type ExecCommand = (
+  this: Document,
+  commandId: string,
+  showUI?: boolean | undefined,
+  value?: string | undefined,
+) => boolean;
+
 export type MakeInputTransformOptionsWithoutExecCommand = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
@@ -16,7 +23,7 @@ export type MakeInputTransformOptionsWithoutExecCommand = {
 export type MakeInputTransformOptionsWithExecCommand = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
-  execCommand: Document['execCommand'];
+  execCommand: ExecCommand;
   document?: Document;
   phase?: EventPhase;
 };
@@ -24,7 +31,7 @@ export type MakeInputTransformOptionsWithExecCommand = {
 export type MakeInputTransformOptions = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
-  execCommand?: Document['execCommand'] | null;
+  execCommand?: ExecCommand | null;
   document?: Document;
   phase?: EventPhase;
 };

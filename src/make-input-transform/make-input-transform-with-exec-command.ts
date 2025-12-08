@@ -11,13 +11,14 @@ import {
 } from './event';
 import { getEventTarget } from './get-event-target';
 import type {
+  ExecCommand,
   MakeInputTransformOptionsWithExecCommand,
   MakeInputTransformResult,
 } from './types';
 
 const insertText = (
   document: Document,
-  execCommand: Document['execCommand'],
+  execCommand: ExecCommand,
   value: string,
 ) => (
   execCommand.call(document, COMMAND_INSERT_TEXT, false, value)
