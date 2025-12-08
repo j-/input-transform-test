@@ -39,6 +39,15 @@ export const InputWithExecCommand: FC<
   }, [applyTransform, handleBeforeInput, handleInput]);
 
   return (
-    <input ref={inputRef} {...props} />
+    <input
+      ref={inputRef}
+      onChange={(e) => {
+        console.info('InputWithExecCommand onChange', e.currentTarget.value, e);
+      }}
+      onInput={(e) => {
+        console.info('InputWithExecCommand onInput', e.currentTarget.value, e);
+      }}
+      {...props}
+    />
   );
 };

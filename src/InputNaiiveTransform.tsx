@@ -13,11 +13,15 @@ export const InputNaiiveTransform: FC<
 
   return (
     <input
-      {...props}
-      value={transform(value)}
+      value={value}
       onChange={(e) => {
-        setValue(e.currentTarget.value);
+        console.info('InputNaiiveTransform onChange', e.currentTarget.value, e);
+        setValue(transform(e.currentTarget.value));
       }}
+      onInput={(e) => {
+        console.info('InputNaiiveTransform onInput', e.currentTarget.value, e);
+      }}
+      {...props}
     />
   );
 };

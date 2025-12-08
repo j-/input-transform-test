@@ -38,6 +38,15 @@ export const InputWithoutExecCommand: FC<
   }, [applyTransform, handleBeforeInput, handleInput]);
 
   return (
-    <input ref={inputRef} {...props} />
+    <input
+      ref={inputRef}
+      onChange={(e) => {
+        console.info('InputWithoutExecCommand onChange', e.currentTarget.value, e);
+      }}
+      onInput={(e) => {
+        console.info('InputWithoutExecCommand onInput', e.currentTarget.value, e);
+      }}
+      {...props}
+    />
   );
 };
