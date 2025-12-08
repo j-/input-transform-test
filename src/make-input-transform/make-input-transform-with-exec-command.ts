@@ -1,4 +1,5 @@
-import { COMMAND_INSERT_TEXT } from './constants';
+import { assert } from './assert';
+import { COMMAND_INSERT_TEXT, PHASE_TARGET } from './constants';
 import { debugEvent } from './debug';
 import {
   getEventInputData,
@@ -8,6 +9,7 @@ import {
   isTextInputEvent,
   unwrapEvent,
 } from './event';
+import { getEventTarget } from './get-event-target';
 import type {
   MakeInputTransformOptionsWithExecCommand,
   MakeInputTransformResult,
@@ -26,11 +28,12 @@ export const makeInputTransformWithExecCommand = ({
   document = globalThis.document,
   execCommand = document.execCommand,
   selectWhenDropped = true,
+  phase = PHASE_TARGET,
 }: MakeInputTransformOptionsWithExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
     const currentValue = input.value;
     const transformedValue = transform(currentValue);
-    if (transformedValue !== '' && transformedValue !== currentValue) {
+    if (transformedValue !== currentValue) {
       input.value = transformedValue;
     }
   },
@@ -73,7 +76,12 @@ export const makeInputTransformWithExecCommand = ({
       insertText(document, execCommand, transformedData);
 
       if (isInsertFromDropEvent(e) && selectWhenDropped) {
-        const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+        const input = getEventTarget(maybeSyntheticEvent, phase);
+        assert(
+          input instanceof HTMLInputElement,
+          'Expected event to have target.',
+        );
+
         const currentValue = input.value;
         
         const selectionEnd = input.selectionStart ?? currentValue.length;
@@ -88,7 +96,12 @@ export const makeInputTransformWithExecCommand = ({
   handleInput(maybeSyntheticEvent) {
     debugEvent(maybeSyntheticEvent);
 
-    const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+    const input = getEventTarget(maybeSyntheticEvent, phase);
+    assert(
+      input instanceof HTMLInputElement,
+      'Expected event to have target.',
+    );
+
     const currentValue = input.value;
     const transformedValue = transform(currentValue);
 

@@ -1,3 +1,5 @@
+import { assert } from './assert';
+import { PHASE_TARGET } from './constants';
 import { debugEvent } from './debug';
 import {
   getEventInputData,
@@ -9,6 +11,7 @@ import {
   isTextInputEvent,
   unwrapEvent,
 } from './event';
+import { getEventTarget } from './get-event-target';
 import type {
   MakeInputTransformOptionsWithoutExecCommand,
   MakeInputTransformResult,
@@ -17,6 +20,7 @@ import type {
 export const makeInputTransformWithoutExecCommand = ({
   transform,
   selectWhenDropped = true,
+  phase = PHASE_TARGET,
 }: MakeInputTransformOptionsWithoutExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
     const currentValue = input.value;
@@ -77,7 +81,12 @@ export const makeInputTransformWithoutExecCommand = ({
     // but are not actually of type `InputEvent`.
     // Just performs a naiive transform.
     if (!isInputEvent(e)) {
-      const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+      const input = getEventTarget(maybeSyntheticEvent, phase);
+      assert(
+        input instanceof HTMLInputElement,
+        'Expected event to have target.',
+      );
+
       const currentValue = input.value;
       const transformedValue = transform(currentValue);
 
@@ -88,7 +97,12 @@ export const makeInputTransformWithoutExecCommand = ({
       return;
     }
 
-    const input = maybeSyntheticEvent.currentTarget as HTMLInputElement;
+    const input = getEventTarget(maybeSyntheticEvent, phase);
+    assert(
+      input instanceof HTMLInputElement,
+      'Expected event to have target.',
+    );
+
     const currentValue = input.value;
     
     const selectionStart = input.selectionStart ?? currentValue.length;
