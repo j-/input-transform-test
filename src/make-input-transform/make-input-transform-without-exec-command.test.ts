@@ -12,7 +12,9 @@ type CaseTargetState = {
 
 type CaseDetails = {
   targetBefore: CaseTargetState;
-  event: Event;
+  eventConstructor?: 'Event';
+  eventType: string;
+  eventInit?: EventInit | InputEventInit;
   targetAfter?: CaseTargetState;
   didPreventDefault?: true;
 };
@@ -87,6 +89,64 @@ describe('makeInputTransformWithoutExecCommand()', () => {
     });
 
     it.each<Case>([
+      // #region Type valid character into populated input
+      ['can type valid character into populated input', {
+        "targetBefore": {
+          "value": "123",
+          "selectionStart": 0,
+          "selectionEnd": 3,
+        },
+        "eventType": "beforeinput",
+        "eventInit": {
+          "inputType": "insertText",
+          "data": "9",
+        },
+        "targetAfter": {
+          "value": "123",
+          "selectionStart": 0,
+          "selectionEnd": 3,
+        },
+      },
+      {
+        "targetBefore": {
+          "value": "9",
+          "selectionStart": 1,
+          "selectionEnd": 1,
+        },
+        "eventType": "input",
+        "eventInit": {
+          "inputType": "insertText",
+          "data": "9",
+        },
+        "targetAfter": {
+          "value": "9",
+          "selectionStart": 1,
+          "selectionEnd": 1,
+        },
+      }],
+      // #endregion
+      
+      // #region Type invalid character into populated input
+      ['cannot type invalid character into populated input', {
+        "targetBefore": {
+          "value": "123",
+          "selectionStart": 0,
+          "selectionEnd": 3,
+        },
+        "eventType": "beforeinput",
+        "eventInit": {
+          "inputType": "insertText",
+          "data": "a",
+        },
+        "didPreventDefault": true,
+        "targetAfter": {
+          "value": "123",
+          "selectionStart": 0,
+          "selectionEnd": 3,
+        },
+      }],
+      // #endregion
+      
       // #region Paste into empty input
       ['can paste valid characters into empty input', {
         targetBefore: {
@@ -94,20 +154,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }, {
         targetBefore: {
           value: '1030',
           selectionStart: 4,
           selectionEnd: 4,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }],
 
       ['can paste valid+invalid characters into empty input', {
@@ -116,20 +178,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
       }, {
         targetBefore: {
           value: 'submit by 10:30am Monday',
           selectionStart: 24,
           selectionEnd: 24,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
         targetAfter: {
           value: '1030',
           selectionStart: 4,
@@ -143,10 +207,11 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'hello world',
-        }),
+        },
         didPreventDefault: true,
       }],
       // #endregion
@@ -158,20 +223,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }, {
         targetBefore: {
           value: '99103099',
           selectionStart: 6,
           selectionEnd: 6,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }],
 
       ['can paste valid+invalid characters into non-empty input', {
@@ -180,20 +247,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
       }, {
         targetBefore: {
           value: '99submit by 10:30am Monday99',
           selectionStart: 26,
           selectionEnd: 26,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
         targetAfter: {
           value: '99103099',
           selectionStart: 6,
@@ -207,10 +276,11 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'hello world',
-        }),
+        },
         didPreventDefault: true,
       }],
       // #endregion
@@ -222,20 +292,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 1,
           selectionEnd: 3,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }, {
         targetBefore: {
           value: '910309',
           selectionStart: 5,
           selectionEnd: 5,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: '1030',
-        }),
+        },
       }],
 
       ['can paste valid+invalid characters into non-empty input with selection', {
@@ -244,20 +316,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 1,
           selectionEnd: 3,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
       }, {
         targetBefore: {
           value: '9submit by 10:30am Monday9',
           selectionStart: 24,
           selectionEnd: 24,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
-        }),
+        },
         targetAfter: {
           value: '910309',
           selectionStart: 5,
@@ -271,10 +345,11 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 1,
           selectionEnd: 3,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromPaste',
           data: 'hello world',
-        }),
+        },
         didPreventDefault: true,
       }],
       // #endregion
@@ -286,20 +361,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025',
-        }),
+        },
       }, {
         targetBefore: {
           value: '2025',
           selectionStart: 0,
           selectionEnd: 4,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025',
-        }),
+        },
       }],
 
       ['can drop valid+invalid characters into empty input', {
@@ -308,20 +385,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
-        }),
+        },
       }, {
         targetBefore: {
           value: '2025-12-04',
           selectionStart: 0,
           selectionEnd: 10,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
-        }),
+        },
         targetAfter: {
           value: '20251204',
           selectionStart: 0,
@@ -335,10 +414,11 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 0,
           selectionEnd: 0,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: 'hello world',
-        }),
+        },
         didPreventDefault: true,
       }],
       // #endregion
@@ -350,20 +430,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025',
-        }),
+        },
       }, {
         targetBefore: {
           value: '99202599',
           selectionStart: 2,
           selectionEnd: 6,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025',
-        }),
+        },
       }],
 
       ['can drop valid+invalid characters into non-empty input', {
@@ -372,20 +454,22 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
-        }),
+        },
       }, {
         targetBefore: {
           value: '992025-12-0499',
           selectionStart: 2,
           selectionEnd: 12,
         },
-        event: new InputEvent('input', {
+        eventType: 'input',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
-        }),
+        },
         targetAfter: {
           value: '992025120499',
           selectionStart: 2,
@@ -399,14 +483,14 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 2,
           selectionEnd: 2,
         },
-        event: new InputEvent('beforeinput', {
+        eventType: 'beforeinput',
+        eventInit: {
           inputType: 'insertFromDrop',
           data: 'hello world',
-        }),
+        },
         didPreventDefault: true,
       }],
       // #endregion
-
 
       // #region Autocomplete
       ['handles autocomplete with invalid characters', {
@@ -415,7 +499,8 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 13,
           selectionEnd: 13,
         },
-        event: new Event('input'),
+        eventConstructor: 'Event',
+        eventType: 'input',
         targetAfter: {
           value: '553121286800',
           selectionStart: 12,
@@ -429,10 +514,11 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           selectionStart: 11,
           selectionEnd: 11,
         },
-        event: new Event('input'),
+        eventConstructor: 'Event',
+        eventType: 'input',
       }],
       // #endregion
-    ])('%s', (_, ...detailsItems) => {      
+    ])('%s', (_, ...detailsItems) => {
       const target = document.createElement('input');
       target.onbeforeinput = handleBeforeInput;
       target.oninput = handleInput;
@@ -441,9 +527,15 @@ describe('makeInputTransformWithoutExecCommand()', () => {
         const {
           targetBefore,
           targetAfter = targetBefore,
-          event,
           didPreventDefault = false,
+          eventConstructor = 'InputEvent',
+          eventType,
+          eventInit,
         } = details;
+
+        const event = eventConstructor === 'Event' ?
+          new Event(eventType, eventInit) :
+          new InputEvent(eventType, eventInit);
 
         Object.assign(target, targetBefore);
         const preventDefault = spyOn(event, 'preventDefault');

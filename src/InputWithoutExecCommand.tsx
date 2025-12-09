@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, type FC, type InputHTMLAttributes } from 'react';
 import { makeInputTransform, type StringTransform } from './make-input-transform';
+import { useDebug } from './use-debug';
 
 export const InputWithoutExecCommand: FC<
   InputHTMLAttributes<HTMLInputElement> &
@@ -9,6 +10,7 @@ export const InputWithoutExecCommand: FC<
   ...props
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  useDebug(inputRef);
 
   const {
     applyTransform,

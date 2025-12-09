@@ -1,6 +1,5 @@
 import { assert } from './assert';
 import { COMMAND_INSERT_TEXT, PHASE_TARGET } from './constants';
-import { debugEvent } from './debug';
 import {
   getEventInputData,
   isInsertFromDropEvent,
@@ -46,8 +45,6 @@ export const makeInputTransformWithExecCommand = ({
    * accordingly.
    */
   handleBeforeInput(maybeSyntheticEvent) {
-    debugEvent(maybeSyntheticEvent);
-    
     const e = unwrapEvent(maybeSyntheticEvent);
 
     // Only handle these input types.
@@ -95,8 +92,6 @@ export const makeInputTransformWithExecCommand = ({
 
   /** Fallback to ensure input is transformed even if previous step fails. */
   handleInput(maybeSyntheticEvent) {
-    debugEvent(maybeSyntheticEvent);
-
     const input = getEventTarget(maybeSyntheticEvent, phase);
     assert(
       input instanceof HTMLInputElement,

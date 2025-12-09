@@ -1,5 +1,6 @@
-import { useState, type FC, type InputHTMLAttributes } from 'react';
+import { useRef, useState, type FC, type InputHTMLAttributes } from 'react';
 import type { StringTransform } from './make-input-transform';
+import { useDebug } from './use-debug';
 
 export const InputNaiiveTransform: FC<
   Omit<InputHTMLAttributes<HTMLInputElement>, 'defaultValue'> &
@@ -9,10 +10,14 @@ export const InputNaiiveTransform: FC<
   transform,
   ...props
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  useDebug(inputRef);
+
   const [value, setValue] = useState(defaultValue);
 
   return (
     <input
+      ref={inputRef}
       value={value}
       onChange={(e) => {
         console.info('InputNaiiveTransform onChange', e.currentTarget.value, e);
