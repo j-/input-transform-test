@@ -129,12 +129,12 @@ export const useDebug = (ref: RefObject<HTMLInputElement | null>) => {
     }, { signal, capture: true });
     
     parentElement.addEventListener('beforeinput', (e) => {
-      Object.assign(details[0]!, bubble(e));
+      Object.assign(details[0] || {}, bubble(e));
       enqueueFlush();
     }, { signal, capture: false });
 
     parentElement.addEventListener('input', (e) => {
-      Object.assign(details[1]!, bubble(e));
+      Object.assign(details[1] || {}, bubble(e));
       flush();
     }, { signal, capture: false });
 

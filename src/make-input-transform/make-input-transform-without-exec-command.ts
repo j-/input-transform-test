@@ -86,7 +86,9 @@ export const makeInputTransformWithoutExecCommand = ({
       const transformedValue = transform(currentValue);
 
       if (transformedValue !== currentValue) {
-        input.value = transformedValue;
+        // Use `input.setRangeText()` over `input.value = `, otherwise
+        // React will not detect the `change` event firing.
+        input.setRangeText(transformedValue, 0, input.value.length);
       }
 
       return;
@@ -122,7 +124,9 @@ export const makeInputTransformWithoutExecCommand = ({
       );
   
       if (transformedValue !== currentValue) {
-        input.value = transformedValue;
+        // Use `input.setRangeText()` over `input.value = `, otherwise
+        // React will not detect the `change` event firing.
+        input.setRangeText(transformedValue, 0, input.value.length);
         
         input.setSelectionRange(
           transformedValueBeforeSelection.length,
@@ -145,7 +149,9 @@ export const makeInputTransformWithoutExecCommand = ({
       );
   
       if (transformedValue !== currentValue) {
-        input.value = transformedValue;
+        // Use `input.setRangeText()` over `input.value = `, otherwise
+        // React will not detect the `change` event firing.
+        input.setRangeText(transformedValue, 0, input.value.length);
 
         if (selectWhenDropped) {
           input.setSelectionRange(
