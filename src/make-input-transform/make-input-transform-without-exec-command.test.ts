@@ -543,9 +543,9 @@ describe('makeInputTransformWithoutExecCommand()', () => {
         expect(preventDefault).toHaveBeenCalledTimes(
           didPreventDefault ? 1 : 0
         );
-        expect(target.value).toEqual(targetAfter.value);
-        expect(target.selectionStart).toEqual(targetAfter.selectionStart);
-        expect(target.selectionEnd).toEqual(targetAfter.selectionEnd);
+        expect(target.value).toBe(targetAfter.value);
+        expect(target.selectionStart).toBe(targetAfter.selectionStart);
+        expect(target.selectionEnd).toBe(targetAfter.selectionEnd);
       }
     });
   });
