@@ -55,7 +55,11 @@ export const App = () => {
 
       <p>While this <em>can</em> be done without "exec command", doing so introduces complexity in implementation and, worse, overrides the browser's undo stack effectively disabling Cmd+Z / Ctrl+Z.</p>
 
-      <p>However, since it is deprecated, we must implement a solution which is independent of this API. The examples on this page use "exec command" when it is available and degrade gracefully to a fall back approach when not available. This ensures the solution is future-proof and has the added benefit of working almost as well in environments where we do not expect this API to exist (e.g. in unit tests).</p>
+      <p>However, since it is deprecated, we must implement a solution which is independent of this API. The examples on this page use "exec command" when it is available and degrade gracefully to a fall back approach when not available ("set range text"). This ensures the solution is future-proof and has the added benefit of working almost as well in environments where we do not expect this API to exist (e.g. in unit tests).</p>
+
+      <h2>What is "set range text" API?</h2>
+
+      <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setRangeText" target="_blank" rel="nofollow">HTMLInputElement setRangeText() method</a> is the next best thing to execCommand(). It will update the text and try to preserve the history stack.</p>
     </form>
   );
 };

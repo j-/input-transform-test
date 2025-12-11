@@ -2,13 +2,13 @@ import {
   makeInputTransformWithExecCommand,
 } from './make-input-transform-with-exec-command';
 import {
-  makeInputTransformWithoutExecCommand,
-} from './make-input-transform-without-exec-command';
+  makeInputTransformWithSetRangeText,
+} from './make-input-transform-with-set-range-text';
 import type {
   MakeInputTransformResult,
   MakeInputTransformOptions,
   MakeInputTransformOptionsWithExecCommand as WithExecCommand,
-  MakeInputTransformOptionsWithoutExecCommand as WithoutExecCommand,
+  MakeInputTransformOptionsWithSetRangeText as WithSetRangeText,
 } from './types';
 
 export const makeInputTransform = (
@@ -16,5 +16,5 @@ export const makeInputTransform = (
 ): MakeInputTransformResult => (
   typeof options.execCommand === 'function' ?
     makeInputTransformWithExecCommand(options as WithExecCommand) :
-    makeInputTransformWithoutExecCommand(options as WithoutExecCommand)
+    makeInputTransformWithSetRangeText(options as WithSetRangeText)
 );

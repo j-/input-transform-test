@@ -1,8 +1,8 @@
 import type { FC, InputHTMLAttributes } from 'react';
 import { InputNaiiveTransform } from '../InputNaiiveTransform';
 import { InputNoTransform } from '../InputNoTransform';
+import { InputWithSetRangeText } from '../InputWithSetRangeText';
 import { InputWithExecCommand } from '../InputWithExecCommand';
-import { InputWithoutExecCommand } from '../InputWithoutExecCommand';
 import { transform } from './transform';
 
 const inputProps = {
@@ -34,7 +34,7 @@ export const ScenarioFilterAutocomplete: FC = () => {
           <tr>
             <th>No transform</th>
             <th>Naiive transform</th>
-            <th>Without exec command</th>
+            <th>With "set range text"</th>
             <th>With exec command</th>
           </tr>
         </thead>
@@ -54,7 +54,7 @@ export const ScenarioFilterAutocomplete: FC = () => {
               />
             </td>
             <td>
-              <InputWithoutExecCommand
+              <InputWithSetRangeText
                 {...inputProps}
                 transform={transform}
                 autoComplete={`section-c ${inputProps.autoComplete}`}

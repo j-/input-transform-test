@@ -2,7 +2,7 @@
 
 import { fn, spyOn } from '@vitest/spy';
 import { describe, expect, it } from 'vitest';
-import { makeInputTransformWithoutExecCommand } from './make-input-transform-without-exec-command';
+import { makeInputTransformWithSetRangeText } from './make-input-transform-with-set-range-text';
 
 type CaseTargetState = {
   value: string;
@@ -24,9 +24,9 @@ type Case = [
   ...details: CaseDetails[],
 ];
 
-describe('makeInputTransformWithoutExecCommand()', () => {
+describe('makeInputTransformWithSetRangeText()', () => {
   describe('filtering', () => {
-    const result = makeInputTransformWithoutExecCommand({
+    const result = makeInputTransformWithSetRangeText({
       transform: (str) => str.replace(/\D/g, ''),
     });
     
@@ -183,22 +183,12 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
         },
-      }, {
-        targetBefore: {
-          value: 'submit by 10:30am Monday',
-          selectionStart: 24,
-          selectionEnd: 24,
-        },
-        eventType: 'input',
-        eventInit: {
-          inputType: 'insertFromPaste',
-          data: 'submit by 10:30am Monday',
-        },
         targetAfter: {
           value: '1030',
           selectionStart: 4,
           selectionEnd: 4,
         },
+        didPreventDefault: true,
       }],
 
       ['cannot paste invalid characters into empty input', {
@@ -252,22 +242,12 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
         },
-      }, {
-        targetBefore: {
-          value: '99submit by 10:30am Monday99',
-          selectionStart: 26,
-          selectionEnd: 26,
-        },
-        eventType: 'input',
-        eventInit: {
-          inputType: 'insertFromPaste',
-          data: 'submit by 10:30am Monday',
-        },
         targetAfter: {
           value: '99103099',
           selectionStart: 6,
           selectionEnd: 6,
         },
+        didPreventDefault: true,
       }],
 
       ['cannot paste invalid characters into non-empty input', {
@@ -321,22 +301,12 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           inputType: 'insertFromPaste',
           data: 'submit by 10:30am Monday',
         },
-      }, {
-        targetBefore: {
-          value: '9submit by 10:30am Monday9',
-          selectionStart: 24,
-          selectionEnd: 24,
-        },
-        eventType: 'input',
-        eventInit: {
-          inputType: 'insertFromPaste',
-          data: 'submit by 10:30am Monday',
-        },
         targetAfter: {
           value: '910309',
           selectionStart: 5,
           selectionEnd: 5,
         },
+        didPreventDefault: true,
       }],
 
       ['cannot paste invalid characters into non-empty input with selection', {
@@ -390,22 +360,12 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
         },
-      }, {
-        targetBefore: {
-          value: '2025-12-04',
-          selectionStart: 0,
-          selectionEnd: 10,
-        },
-        eventType: 'input',
-        eventInit: {
-          inputType: 'insertFromDrop',
-          data: '2025-12-04',
-        },
         targetAfter: {
           value: '20251204',
           selectionStart: 0,
           selectionEnd: 8,
         },
+        didPreventDefault: true,
       }],
 
       ['cannot drop invalid characters into empty input', {
@@ -459,22 +419,12 @@ describe('makeInputTransformWithoutExecCommand()', () => {
           inputType: 'insertFromDrop',
           data: '2025-12-04',
         },
-      }, {
-        targetBefore: {
-          value: '992025-12-0499',
-          selectionStart: 2,
-          selectionEnd: 12,
-        },
-        eventType: 'input',
-        eventInit: {
-          inputType: 'insertFromDrop',
-          data: '2025-12-04',
-        },
         targetAfter: {
           value: '992025120499',
           selectionStart: 2,
           selectionEnd: 10,
         },
+        didPreventDefault: true,
       }],
 
       ['cannot drop invalid characters into non-empty input', {

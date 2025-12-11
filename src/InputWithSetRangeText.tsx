@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, type FC, type InputHTMLAttributes } from 'r
 import { makeInputTransform, type StringTransform } from './make-input-transform';
 import { useDebug } from './use-debug';
 
-export const InputWithoutExecCommand: FC<
+export const InputWithSetRangeText: FC<
   InputHTMLAttributes<HTMLInputElement> &
   { transform: StringTransform; }
 > = ({
@@ -43,10 +43,10 @@ export const InputWithoutExecCommand: FC<
     <input
       ref={inputRef}
       onChange={(e) => {
-        console.info('InputWithoutExecCommand onChange', e.currentTarget.value, e);
+        console.info('InputWithSetRangeText onChange', e.currentTarget.value, e);
       }}
       onInput={(e) => {
-        console.info('InputWithoutExecCommand onInput', e.currentTarget.value, e);
+        console.info('InputWithSetRangeText onInput', e.currentTarget.value, e);
       }}
       {...props}
     />

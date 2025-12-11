@@ -49,13 +49,11 @@ export const getEventInputData = (
 // Do not use `instanceof` since the proto may lie.
 export const isInputEvent = (
   event: Event
-): event is InputEvent & { inputType: string; data: string; } =>
+): event is InputEvent & { inputType: string; } =>
   // Must be one of these event types.
   (event.type === 'input' || event.type === 'beforeinput') &&
   // Must have an input type.
-  getEventInputType(event) != null &&
-  // Must contain data.
-  getEventInputData(event) != null;
+  getEventInputType(event) != null;
 
 export const isTextInputEvent = (event: Pick<Event, 'type'>): boolean =>
   event.type === 'textInput';

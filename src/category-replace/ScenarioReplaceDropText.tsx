@@ -1,8 +1,8 @@
 import type { FC, InputHTMLAttributes } from 'react';
 import { InputNaiiveTransform } from '../InputNaiiveTransform';
 import { InputNoTransform } from '../InputNoTransform';
+import { InputWithSetRangeText } from '../InputWithSetRangeText';
 import { InputWithExecCommand } from '../InputWithExecCommand';
-import { InputWithoutExecCommand } from '../InputWithoutExecCommand';
 import { transform } from './transform';
 
 const inputProps = {
@@ -51,8 +51,8 @@ export const ScenarioReplaceDropText: FC = () => {
           <tr>
             <th>No transform</th>
             <th>Naiive transform</th>
-            <th>Without exec command</th>
-            <th>With exec command</th>
+            <th>With "set range text"</th>
+            <th>With "exec command"</th>
           </tr>
         </thead>
         <tbody>
@@ -64,7 +64,7 @@ export const ScenarioReplaceDropText: FC = () => {
               <InputNaiiveTransform {...inputProps} transform={transform} />
             </td>
             <td>
-              <InputWithoutExecCommand {...inputProps} transform={transform} />
+              <InputWithSetRangeText {...inputProps} transform={transform} />
             </td>
             <td>
               <InputWithExecCommand {...inputProps} transform={transform} />
