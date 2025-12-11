@@ -14,10 +14,19 @@ export type ExecCommand = (
   value?: string | undefined,
 ) => boolean;
 
+export type SetRangeTextAdvanced = (
+  document: Document,
+  execCommand: ExecCommand,  
+  input: HTMLInputElement,
+  value: string,
+  selectionMode: SelectionMode,
+) => void;
+
 export type MakeInputTransformOptionsWithoutExecCommand = {
   transform: StringTransform;
   selectWhenDropped?: boolean;
   phase?: EventPhase;
+  enableHistory?: boolean;
 };
 
 export type MakeInputTransformOptionsWithExecCommand = {
@@ -26,6 +35,8 @@ export type MakeInputTransformOptionsWithExecCommand = {
   execCommand: ExecCommand;
   document?: Document;
   phase?: EventPhase;
+  enableHistory?: boolean;
+  setRangeText?: SetRangeTextAdvanced;
 };
 
 export type MakeInputTransformOptions = {
@@ -34,6 +45,7 @@ export type MakeInputTransformOptions = {
   execCommand?: ExecCommand | null;
   document?: Document;
   phase?: EventPhase;
+  setRangeText?: SetRangeTextAdvanced;
 };
 
 export type MakeInputTransformResult = {

@@ -2,6 +2,7 @@ import { assert } from './assert';
 import { COMMAND_INSERT_TEXT, PHASE_TARGET } from './constants';
 import {
   getEventInputData,
+  isHistoryEvent,
   isInsertFromDropEvent,
   isInsertFromPasteEvent,
   isInsertTextEvent,
@@ -29,6 +30,16 @@ export const makeInputTransformWithExecCommand = ({
   execCommand = document.execCommand,
   selectWhenDropped = true,
   phase = PHASE_TARGET,
+  enableHistory = true,
+  setRangeText = (
+    document,
+    execCommand,
+    _input,
+    value,
+    _selectionMode,
+  ) => {
+    insertText(document, execCommand, value);
+  },
 }: MakeInputTransformOptionsWithExecCommand): MakeInputTransformResult => ({
   applyTransform(input) {
     const currentValue = input.value;
@@ -46,6 +57,12 @@ export const makeInputTransformWithExecCommand = ({
    */
   handleBeforeInput(maybeSyntheticEvent) {
     const e = unwrapEvent(maybeSyntheticEvent);
+
+    // Exit early if history is disabled.
+    if (!enableHistory && isHistoryEvent(e)) {
+      e.preventDefault();
+      return;
+    }
 
     // Only handle these input types.
     if (
@@ -70,23 +87,22 @@ export const makeInputTransformWithExecCommand = ({
       // a clear reason.
       if (!transformedData) return;
 
-      // Use execCommand to insert the transformed text. Preserves history stack.
-      insertText(document, execCommand, transformedData);
+      const input = getEventTarget(maybeSyntheticEvent, 'target');
+      assert(
+        input instanceof HTMLInputElement,
+        'Expected event to have target.',
+      );
 
-      if (isInsertFromDropEvent(e) && selectWhenDropped) {
-        const input = getEventTarget(maybeSyntheticEvent, phase);
-        assert(
-          input instanceof HTMLInputElement,
-          'Expected event to have target.',
-        );
-
-        const currentValue = input.value;
-        
-        const selectionEnd = input.selectionStart ?? currentValue.length;
-        const selectionStart = selectionEnd - transformedData.length;
-
-        input.setSelectionRange(selectionStart, selectionEnd);
-      }
+      const selectionMode =
+        isInsertFromDropEvent(e) && selectWhenDropped ? 'select' : 'end';
+      
+      setRangeText(
+        document,
+        execCommand,
+        input,
+        transformedData,
+        selectionMode,
+      );
     }
   },
 
