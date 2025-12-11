@@ -102,9 +102,7 @@ export const makeInputTransformBase = ({
     const transformedValue = transform(currentValue);
 
     if (transformedValue !== currentValue) {
-      // Use `input.setRangeText()` over `input.value = `, otherwise
-      // React will not detect the `change` event firing.
-      input.setRangeText(transformedValue, 0, input.value.length, 'end');
+      setRangeText.call(input, transformedValue, 0, input.value.length, 'end');
     }
   },
 });
